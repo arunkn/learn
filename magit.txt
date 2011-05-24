@@ -1,0 +1,76 @@
+M-x magit-status -- open magit buffer
+
+Status
+=====
+TAB on a section --- toggles display
+1 2 3 4 on a section --- increase verbosity
+M-1 M-2 M-3 M-4 -- increase verbosity of all sections
+M-h M-H         --- hide all 2 verbosity
+M-s M-S		--- show all (level 4 verbosity)
+
+Untracked Files
+===============
+In untracked-files section
+s - stage a file
+s - (on the untracked-files section title) stage all untracked files
+C-u s - from anywhere will stage all the untracked files
+i - add to .gitignore
+I - add to .exclude
+C-u i - get file name for ignoring
+
+Staging/Committing
+===============
+s/S - stage
+u/U - unstage
+C-u s - ask filename to be staged
+C-u S - stage all untracked files
+k - discard uncommited change (checkout)
+c - commit message
+C-c C-c - write comment and commit
+
+History
+=======
+l - display the history
+Ret - in commit - open a new window for the commit and put the point there
+SPC - display commit info in another window
+a - apply the current commit to the current branch (cherry-picking)
+A - cherrypick and commit
+v - revert the current commit
+C-w - save the cummit number
+= - diff between the current 
+. - select the commit
+s - grep history
+reflog can be found in the history page
+
+Diffing
+=======
+d - show diff with working tree
+D - show diff between arbitrary trees
+
+Tagging
+=======
+t t - make a lightweight tag
+t T - make an annotated tag
+In the buffer C-c C-c will make the tag
+
+Resetting*
+=========
+x - reset head to a particular version
+X on a particular commit - reset the wroking tree and stagin area to the specified commit
+
+Stashing
+========
+z z - stash changes
+a - apply stash
+A - pop stash
+k - delete stash
+z Z - create a stash and retain the changes in the working tree and index
+
+Branching
+=========
+b - change branch
+B - create a branch and switch to it
+
+Wazzup
+======
+w - show summary of other branches
