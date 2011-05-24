@@ -74,3 +74,57 @@ B - create a branch and switch to it
 Wazzup
 ======
 w - show summary of other branches
+
+Merging
+=======
+m - manual merge (applies all changes to working area but does not commit)
+M - automatic merge
+
+Rebasing
+=======
+R - start/continue with rebase
+
+Pushing & Pulling
+=================
+P - push
+C-u P - push to which repository?
+
+f - git remote update
+F - git pull
+
+
+Rewriting
+=========
+Look at the explanation in the manual below
+r - rewrite a particular commit
+If you do that the successive commits will be shown as pending and you will have the option to
+a - apply the commits or
+A - apply and save the commits
+
+As hinted at earlier, you can rewrite your commit history. For example, you can reset he current head to an earlier commit with x. This leaves the working tree unchanged, and the status buffer will show all the changes that have been made since that new value of the current head. You can commit these changes again, possibly splitting them into multiple commits as you go along.
+
+Amending your last commit is a common special case of rewriting history like this.
+
+Another common way to rewrite history is to reset the head to an earlier commit, and then to cherry pick the previous commits in a different order. You could pick them from the reflog, for example.
+
+Magit has several commands that can simplify the book keeping associated with rewriting. These commands all start with the r prefix key.
+
+Typing r s will start a rewrite operation. You will be prompted for a base commit, and all commits between the current head and this commit are put in a list of Pending commits (including the base commit). The current head will then be reset to the parent of the base commit.
+
+You would then typically use a and A to cherry pick commits from the list of pending commits in the desired order, until all have been applied. Magit shows which commits have been applied by changing their marker from * to ..
+
+Using A will immediately commit the commit (as usual). If you want to combine multiple previous commits into a single new one, use a to apply them all to your working tree, and then commit them together.
+
+Magit has no explicit support for rewriting merge commits. It will happily include merge commits in the list of pending commits, but there is no way of replaying them automatically. You have to redo the merge explicitly.
+
+You can also use v to revert a commit when you have changed your mind. This will change the . mark back to *.
+
+Once you are done with the rewrite, type r t to remove the book keeping information from the status buffer.
+
+If you rather wish to start over, type r a. This will abort the rewriting, resetting the current head back to the value it had before the rewrite was started with r s.
+
+Typing r f will finish the rewrite: it will apply all unused commits one after the other, as if you would us A with all of them.
+
+You can change the * and . marks of a pending commit explicitly with r * and r ..
+
+In addition to a list of pending commits, the status buffer will show the Pending changes. This section shows the diff between the original head and the current head. You can use it to review the changes that you still need to rewrite, and you can apply hunks from it, like from any other diff. 
