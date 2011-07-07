@@ -1,0 +1,217 @@
+* Chapter 2: Grammar
+** Numbers
+  - No separate int and float
+  - 64 bit floats
+
+** String
+  - 16 bit unicode
+  - No character type
+  - *length* property
+  - *immutable*
+
+** Statements
+  - VAR :: Define private variable for a function
+  - switch, while, for and do have *optional labels* to interact with break
+  - *no block scope*
+  - Flase values include
+    + false
+    + null
+    + undefined
+    + Empty string
+    + 0
+    + NaN
+  - Switch statement can only switch upon numbers and strings
+  - for( i = 0; i < 100; i += 1 ) {}
+  - for( key in object ) {}
+  - use *hasOwnProperty(variable)* to check if the property was not inherited
+  - the *typeof* returns number, string, boolean, undefined, function and object.
+  - For arrays and nulls the typof is object
+
+* Chapter 3: Objects
+  - Object :: Mutable keyed collection
+  - Numbers/Strings/Booleans also have properties
+  - Arrays/Regex/Functions/Objects are all objects
+  - Example object literal
+
+var empty_object = {};
+var storage = {
+ "first-name" : "Arun",
+ "last-name" : "Rajan"
+};
+
+storage["last-name"] // "Rajan"
+
+  - Object literals can nest
+  - *TypeError* will be thrown for undefined.property
+
+** Prototype
+  - Every object is linked to a *prototype* from which it inherits properties
+  - All objects have __proto__ which refers to the same object as the parent.protype
+  - Objects created with literal notation won't have *prototype* but their __proto__
+    will be linked to Object.prototype
+
+x = {};
+typeof x.prototype // undefined
+Object.prototype === x.__proto__ // true
+
+y = function(){};
+typeof y.prototype // 'object' = not undefined
+y.__proto__        // [Function: Empty]
+
+  - Constructors have *prototype* and *objects* created with them have *__proto__*
+  - To create an object based on other, we have to create a constructor and set its
+    prototype to the original object and create an object from the constructor.
+  - To create an object based on another we can introduce a Object.create
+     as follows
+
+if (typeof Object.create !== 'function') {
+  Object.create = function(o) {
+    var F = function () {};
+    F.prototype = o;
+    return new F();
+  };
+}
+
+  - Prototype is *never* touched upon updating an object.
+  - Going up the prototype chain while retrieving information is called *delegation*
+  - If the prototype object gets changed then all the objects having the same prototype
+    will see the change
+
+** Reflection
+  - While iterating through an object's properties we will also encounter its inherited
+    properties.
+  - Use *hasOwnProperty* to filter them out.
+
+** Enumeration
+  - Use *for-in* syntax
+  - Order of enumeration not guaranteed
+
+** Delete
+  - Remove a property form the object if it has one
+  - Does not touch prototype
+
+** Global Abatement
+  - Since JS does not have scoping all the non-local variables fall into the same global
+    namespace.
+  - To solve this problem create a single master global object for your app and put the
+    rest of the variables inside it.
+
+
+* Chapter 4: Functions
+
+** Function Objects
+  - Functions are objects
+  - Objects are key/value pairs with a hidden linke (using __proto__) to prototype object.
+    Those which are created with literal notation have their __proto__ = Object.prototype
+  - Functions have their __proto__ pointing to Function.prototype (which internally is linked
+    to Object.prototype)
+  - Functions have the following 3 components
+    + __proto__
+    + Context of creation
+    + Code
+  - Functions are created with a prototype object which point to an object with a constructor
+    property set to the function itself
+
+
+	     +- ------------+		 +-----------------+		+- ------------+
+       	     |  Function    |  	       	 |    MyFunc       |   	       	|   MyObject   |
+	     |              |		 |                 |		|              |
+	     +--------------+		 +-----------------+		+--------------+
+	     |  prototype   |		 |   prototype     |    	|   __proto__  |
+	     |              |		 |                 +----+ 	|              |
+	     +----+---------+		 +-----------------+ 	| 	+--+-----------+
+		  | 	         +-------+    __proto__    |	|	   |
+		  | 		 |	 |                 |	|	   |
+		  |  		 |	 +-----------+-----+	|	   |
+		  |		 |		     |		|	   |
+		  |		 |		     |		|	   |
+		  |		 |		     |		|	   |
+		  |		 |		     |		|	   |
+		  |       +- ----+-------+	     |	      +-|----------+-+
+		  +-------+  Function.   |     	     | 	      |  Prototype   |
+			  |   prototype  |     	     |        |              |
+			  +--------------+	     |        +--------------+
+			  |              |	     +--------+  Constructor |
+			  |              |	              |              |
+			  +--------------+		      +--------------+
+
+  - Since functions are objects they can even have methods
+  - Eg function
+
+function myfunc() {
+  // function body
+};
+
+** Invocation
+  - Functions are sent 2 extra parameters
+    + arguments
+    + this
+  - For arguments
+    + No type checking
+    + If function is invoked with more arguments then extra args are ignored
+    + If invocation has fewer arguments then the rest will get *undefined*
+
+*** Method Invocation Pattern
+  - Method :: Function stored as property of object
+  - this :: the object whose method is being invoked
+  - Public Methods :: Methods that get object context from *this*
+
+*** Function Invocation Pattern
+  - this :: global object
+  - Redefinition of *this* was a mistake. When a function invokes its inner function
+    *this* gets changed to global object
+  - The following is the work-around for that design issue
+
+#+BEGIN_SRC javascript
+  myObject = {};
+  myObject.double = function() {
+      var that = this; // workaround
+  
+      var doubler = function () {
+          that.value = add(that.value, that.value);
+      };
+  
+      doubler();
+  };
+  
+  myObject.double();
+#+END_SRC
+
+*** Constructor Invocation Pattern
+  - If a function is invoked with *new* a new object will be created with its
+    __proto__ pointing to function.prototype.
+  - this :: The new object that is being constructed.
+  - constructors :: Functions intended to be used with new
+  - By convension their first letter is capitalized
+
+#+BEGIN_SRC javascript
+  var Quo = function(string) {
+      this.status = string;
+  };
+  
+  Quo.prototype.get_status = function() {
+      return this.status;
+  };
+  
+  var myQuo = new Quo("confused");
+  myQuo.get_status(); // confused
+#+END_SRC
+
+*** Apply Invocation Pattern
+  - Since functions are objects they can have methods
+  - apply is a method of functions which allows apply the function to an argument
+    array.
+  - apply also allows us to rebind the value of this
+
+#+BEGIN_SRC javascript
+  var array = [3, 4];
+  var sum = add.apply(null, array);
+  
+  var statusObject = {
+      status : 'A-OK'
+  };
+  
+  // For Quo's definition look at the previous section
+  var status = Quo.prototype.get_status.apply(statusObject);
+#+END_SRC
+
